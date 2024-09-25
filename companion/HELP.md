@@ -24,6 +24,16 @@ This module will allow you to control IDK Ninjar processors.
 
 -   Output Video Channel [x] Current Video Input Channel
 -   Output Audio Channel [x] Current Audio Input Channel
+-   Output Channel / Input Channel Signal Status
+-   Output Channel / Input Channel Signal Type
+-   Output Channel / Input Channel Color Depth
+-   Output Channel / Input Channel Video Input Width
+-   Output Channel / Input Channel Video Input Height
+-   Output Channel / Input Channel Video Type
+-   Output Channel / Input Channel Video Sync
+-   Output Channel / Input Channel HDCP Authentication
+-   Output Channel / Input Channel Audio Signal Format
+-   Output Channel / Input Channel Audio Sampling Frequency
 
 ## Presets
 
