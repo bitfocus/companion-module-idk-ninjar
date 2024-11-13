@@ -1,5 +1,4 @@
 const { InstanceStatus, TCPHelper } = require('@companion-module/base')
-const constants = require('./constants')
 
 module.exports = {
 	async initConnection() {
