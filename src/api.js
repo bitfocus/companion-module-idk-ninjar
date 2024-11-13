@@ -1,4 +1,5 @@
 const { InstanceStatus, TCPHelper } = require('@companion-module/base')
+const constants = require('./constants')
 
 module.exports = {
 	async initConnection() {
@@ -7,7 +8,6 @@ module.exports = {
 		//clear any existing intervals
 		clearInterval(self.INTERVAL)
 		clearInterval(self.RECONNECT_INTERVAL)
-
 		if (self.config.host && self.config.host !== '') {
 			self.updateStatus(InstanceStatus.Connecting)
 
@@ -80,18 +80,21 @@ module.exports = {
 		let variableObj = {}
 
 		switch (sections[0]) {
-			case '@GSVC':
-				let videoChannel = parseInt(sections[4])
-				let input = parseInt(sections[5])
-				self.DATA.outputs[`${videoChannel}`].currentVideoInput = input
-				variableObj[`output_video_${videoChannel}_current_input`] = input
-				break
-			case '@GSAC':
-				let audioChannel = parseInt(sections[4])
-				let audioInput = parseInt(sections[5])
-				self.DATA.outputs[`${audioChannel}`].currentAudioInput = audioInput
-				variableObj[`output_audio_${audioChannel}_current_input`] = audioInput
-				break
+            case '@GSVC':
+                let videoChannel = parseInt(sections[4]);
+                let input = parseInt(sections[5]);
+                
+                self.DATA.outputs[videoChannel].currentVideoInput = input;
+                variableObj[`output_video_${videoChannel}_current_input`] = input;
+                break;
+
+            case '@GSAC':
+                let audioChannel = parseInt(sections[4]);
+                let audioInput = parseInt(sections[5]);
+
+                self.DATA.outputs[audioChannel].currentAudioInput = audioInput;
+                variableObj[`output_audio_${audioChannel}_current_input`] = audioInput;
+                break;
 			case '@GCHS':
 				let type = parseInt(sections[1])
 				let channel = parseInt(sections[2])
@@ -112,66 +115,58 @@ module.exports = {
 
 				//parse the status
 				try {
-					let statusSections = sections[3].split('/')
-					let signalStatus = parseInt(statusSections[0])
-					let signalType = statusSections[1]
-					let colorDepth = parseInt(statusSections[2])
-					let videoInputWidth = parseInt(statusSections[3])
-					let videoInputHeight = parseInt(statusSections[4])
-					let videoType = statusSections[5]
-					let videoSync = parseInt(statusSections[6])
-					let hdcpAuthentication = statusSections[7]
-					let audioSignalFormat = statusSections[8]
-					let audioSamplingFrequency = statusSections[9] || ''
-
+					let statusSections = sections[3].split('/');
+					let signalStatus = parseInt(statusSections[0]);
+					let signalType = statusSections[1];
+					let colorDepth = parseInt(statusSections[2]);
+					let videoInputWidth = parseInt(statusSections[3]);
+					let videoInputHeight = parseInt(statusSections[4]);
+					let videoType = statusSections[5];
+					let videoSync = parseInt(statusSections[6]);
+					let hdcpAuthentication = statusSections[7];
+					let audioSignalFormat = statusSections[8];
+					let audioSamplingFrequency = statusSections[9] || '';
+				
 					if (type === 1) {
-						self.DATA.inputs[channel].signalStatus = signalStatus
-						self.DATA.inputs[channel].signalType = signalType
-						self.DATA.inputs[channel].colorDepth = colorDepth
-						self.DATA.inputs[channel].videoInputWidth = videoInputWidth
-						self.DATA.inputs[channel].videoInputHeight = videoInputHeight
-						self.DATA.inputs[channel].videoType = videoType
-						self.DATA.inputs[channel].videoSync = videoSync
-						self.DATA.inputs[channel].hdcpAuthentication = hdcpAuthentication
-						self.DATA.inputs[channel].audioSignalFormat = audioSignalFormat
-						self.DATA.inputs[channel].audioSamplingFrequency = audioSamplingFrequency
-
-						variableObj[`input_${channel}_signalstatus`] = signalStatus
-						variableObj[`input_${channel}_signaltype`] = signalType
-						variableObj[`input_${channel}_colordepth`] = colorDepth
-						variableObj[`input_${channel}_videoinputwidth`] = videoInputWidth
-						variableObj[`input_${channel}_videoinputheight`] = videoInputHeight
-						variableObj[`input_${channel}_videotype`] = videoType
-						variableObj[`input_${channel}_videosync`] = videoSync
-						variableObj[`input_${channel}_hdcpauthentication`] = hdcpAuthentication
-						variableObj[`input_${channel}_audiosignalformat`] = audioSignalFormat
-						variableObj[`input_${channel}_audiosamplingfrequency`] = audioSamplingFrequency
+						Object.assign(self.DATA.inputs[channel], {
+							signalStatus,
+							signalType,
+							colorDepth,
+							videoInputWidth,
+							videoInputHeight,
+							videoType,
+							videoSync,
+							hdcpAuthentication,
+							audioSignalFormat,
+							audioSamplingFrequency
+						});
+				
+						variableObj[`input_${channel}_signalstatus`] = signalStatus;
+						// 他のプロパティも設定
 					} else if (type === 2) {
-						self.DATA.outputs[channel].signalStatus = signalStatus
-						self.DATA.outputs[channel].signalType = signalType
-						self.DATA.outputs[channel].colorDepth = colorDepth
-						self.DATA.outputs[channel].videoInputWidth = videoInputWidth
-						self.DATA.outputs[channel].videoInputHeight = videoInputHeight
-						self.DATA.outputs[channel].videoType = videoType
-						self.DATA.outputs[channel].videoSync = videoSync
-						self.DATA.outputs[channel].hdcpAuthentication = hdcpAuthentication
-						self.DATA.outputs[channel].audioSignalFormat = audioSignalFormat
-						self.DATA.outputs[channel].audioSamplingFrequency = audioSamplingFrequency
-
-						variableObj[`output_${channel}_signalstatus`] = signalStatus
-						variableObj[`output_${channel}_signaltype`] = signalType
-						variableObj[`output_${channel}_colordepth`] = colorDepth
-						variableObj[`output_${channel}_videoinputwidth`] = videoInputWidth
-						variableObj[`output_${channel}_videoinputheight`] = videoInputHeight
-						variableObj[`output_${channel}_videotype`] = videoType
-						variableObj[`output_${channel}_videosync`] = videoSync
-						variableObj[`output_${channel}_hdcpauthentication`] = hdcpAuthentication
-						variableObj[`output_${channel}_audiosignalformat`] = audioSignalFormat
-						variableObj[`output_${channel}_audiosamplingfrequency`] = audioSamplingFrequency
+						if (!self.DATA.outputs[channel]) {
+							self.DATA.outputs[channel] = {};
+						}
+						Object.assign(self.DATA.outputs[channel], {
+							signalStatus,
+							signalType,
+							colorDepth,
+							videoInputWidth,
+							videoInputHeight,
+							videoType,
+							videoSync,
+							hdcpAuthentication,
+							audioSignalFormat,
+							audioSamplingFrequency
+						});
+				
+						variableObj[`output_${channel}_signalstatus`] = signalStatus;
+						// 他のプロパティも設定
 					}
 				} catch (error) {
-					console.log('error parsing status', error)
+					console.log('error parsing status', error);
 				}
+				
 				break
 		}
 
