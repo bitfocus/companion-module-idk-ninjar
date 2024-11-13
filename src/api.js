@@ -1,17 +1,13 @@
 const { InstanceStatus, TCPHelper } = require('@companion-module/base')
+const constants = require('./constants')
 
 module.exports = {
-	DATA: {
-		outputs: {},
-		inputs: {},
-	},
 	async initConnection() {
 		let self = this
 
 		//clear any existing intervals
 		clearInterval(self.INTERVAL)
 		clearInterval(self.RECONNECT_INTERVAL)
-
 		if (self.config.host && self.config.host !== '') {
 			self.updateStatus(InstanceStatus.Connecting)
 
@@ -88,10 +84,6 @@ module.exports = {
                 let videoChannel = parseInt(sections[4]);
                 let input = parseInt(sections[5]);
                 
-                // outputs[videoChannel]を動的に初期化
-                if (!self.DATA.outputs[videoChannel]) {
-                    self.DATA.outputs[videoChannel] = {};
-                }
                 self.DATA.outputs[videoChannel].currentVideoInput = input;
                 variableObj[`output_video_${videoChannel}_current_input`] = input;
                 break;
@@ -100,10 +92,6 @@ module.exports = {
                 let audioChannel = parseInt(sections[4]);
                 let audioInput = parseInt(sections[5]);
 
-                // outputs[audioChannel]を動的に初期化
-                if (!self.DATA.outputs[audioChannel]) {
-                    self.DATA.outputs[audioChannel] = {};
-                }
                 self.DATA.outputs[audioChannel].currentAudioInput = audioInput;
                 variableObj[`output_audio_${audioChannel}_current_input`] = audioInput;
                 break;
@@ -140,9 +128,6 @@ module.exports = {
 					let audioSamplingFrequency = statusSections[9] || '';
 				
 					if (type === 1) {
-						if (!self.DATA.inputs[channel]) {
-							self.DATA.inputs[channel] = {};
-						}
 						Object.assign(self.DATA.inputs[channel], {
 							signalStatus,
 							signalType,
