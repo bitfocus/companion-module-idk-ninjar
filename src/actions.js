@@ -3,7 +3,8 @@ module.exports = {
 		let self = this
 		let actions = {}
 
-		actions.loadRegisteredCommand = {
+
+			actions.loadRegisteredCommand = {
 			name: 'Load Registered Command',
 			description: 'Send a registered command to the device',
 			options: [
@@ -12,7 +13,7 @@ module.exports = {
 					label: 'Command Number',
 					id: 'command',
 					default: 1,
-					min: 0,
+					min: 1,
 					max: 256,
 					required: true,
 				},
@@ -34,7 +35,7 @@ module.exports = {
 					id: 'command',
 					default: 1,
 					min: 1,
-					max: 256,
+					max: 512,
 					required: true,
 				},
 			],
@@ -71,21 +72,17 @@ module.exports = {
 			description: 'Switch the output video channel to a specific video input channel',
 			options: [
 				{
-					type: 'number',
+					type: 'dropdown',
 					label: 'Input Channel Number',
 					id: 'input',
-					default: 1,
-					min: 0,
-					max: 4096,
+					choices: self.getInputChannels(),
 					required: true,
 				},
 				{
-					type: 'number',
+					type: 'dropdown',
 					label: 'Output Channel Number',
 					id: 'output',
-					default: 1,
-					min: 0,
-					max: 4096,
+					choices: self.getOutputChannels(), 
 					required: true,
 				},
 			],
@@ -101,21 +98,17 @@ module.exports = {
 			description: 'Switch the output audio channel to a specific audio input channel',
 			options: [
 				{
-					type: 'number',
+					type: 'dropdown',
 					label: 'Input Channel Number',
 					id: 'input',
-					default: 1,
-					min: 0,
-					max: 4096,
+					choices: self.getInputChannels(),
 					required: true,
 				},
 				{
-					type: 'number',
+					type: 'dropdown',
 					label: 'Output Channel Number',
 					id: 'output',
-					default: 1,
-					min: 0,
-					max: 4096,
+					choices: self.getOutputChannels(), 
 					required: true,
 				},
 			],
@@ -131,21 +124,17 @@ module.exports = {
 			description: 'Switch the output video and audio channel to a specific input channel',
 			options: [
 				{
-					type: 'number',
+					type: 'dropdown',
 					label: 'Input Channel Number',
 					id: 'input',
-					default: 1,
-					min: 0,
-					max: 4096,
+					choices: self.getInputChannels(),
 					required: true,
 				},
 				{
-					type: 'number',
+					type: 'dropdown',
 					label: 'Output Channel Number',
 					id: 'output',
-					default: 1,
-					min: 0,
-					max: 4096,
+					choices: self.getOutputChannels(), 
 					required: true,
 				},
 			],
@@ -174,6 +163,35 @@ module.exports = {
 				self.sendCommand(command)
 			},
 		}
+  // 設定が変更されたときに呼ばれるイベント
+  self.configUpdated = async function () {
+	// `inputChannels` と `outputChannels` が更新された場合、再評価して `choices` を更新
+	actions.switchVideoChannel.options[0].choices = self.getInputChannels();  // Inputのchoices
+	actions.switchVideoChannel.options[1].choices = self.getOutputChannels();  // Outputのchoices
+
+	actions.switchAudioChannel.options[0].choices = self.getInputChannels();  // Inputのchoices
+	actions.switchAudioChannel.options[1].choices = self.getOutputChannels();  // Outputのchoices
+
+	actions.switchVideoAndAudioChannel.options[0].choices = self.getInputChannels();  // Inputのchoices
+	actions.switchVideoAndAudioChannel.options[1].choices = self.getOutputChannels();  // Outputのchoices
+
+	self.setActionDefinitions(actions);  // 再度定義を更新
+  }
+/// 動的に `inputChannels` を取得する関数
+self.getInputChannels = function() {
+	// self.DATA.inputs.channelNo が正しく設定されていることを確認
+	const inputChannels = Array.isArray(self.DATA.inputs.channelNo) ? self.DATA.inputs.channelNo : [];
+	if (!inputChannels.includes(0)) inputChannels.unshift(0);
+	return inputChannels.map((ch) => ({ id: ch, label: `Input ${ch}` }));
+  }
+  
+  // 動的に `outputChannels` を取得する関数
+  self.getOutputChannels = function() {
+	// self.DATA.outputs.channelNo が正しく設定されていることを確認
+	const outputChannels = Array.isArray(self.DATA.outputs.channelNo) ? self.DATA.outputs.channelNo : [];
+	if (!outputChannels.includes(0)) outputChannels.unshift(0);
+	return outputChannels.map((ch) => ({ id: ch, label: `Output ${ch}` }));
+  }
 
 		self.setActionDefinitions(actions)
 	},
