@@ -24,11 +24,13 @@ module.exports = {
 
 			self.socket.on('connect', () => {
 				self.updateStatus(InstanceStatus.Ok)
-				self.sendCommand('@GIV,0,0,1')
+				self.sendCommand('@GCHE,1,0,1,1')
+				self.sendCommand('@GCHE,2,0,1,1')
 				self.getData() //get initial data
 				//start polling, if enabled
 				if (self.config.polling) {
 					self.INTERVAL = setInterval(() => {
+						self.sendCommand('@GIV,0,0,1')
 						self.getData()
 					}, self.config.pollInterval)
 				}
@@ -263,33 +265,6 @@ module.exports = {
 					self.initVariables();
 					self.configUpdated();
 					break;		
-					case '@GIV': {
-						let version = sections[5]; // バージョン番号取得
-						console.log("Received version:", version);
-		
-						let [major, minor, patch = 0] = version.split('.').map(Number);
-		
-						// 2.22.1より前なら GCHE を送らない
-						if (major < 2 || (major === 2 && minor < 22) || (major === 2 && minor === 22 && patch < 1)) {
-							
-							// 古いバージョンなら 1~128ch を追加
-							if (!self.DATA.inputs) self.DATA.inputs = {};
-							if (!self.DATA.outputs) self.DATA.outputs = {};
-							
-							self.DATA.inputs.channelNo = Array.from({ length: 128 }, (_, i) => i + 1);
-							self.DATA.outputs.channelNo = Array.from({ length: 128 }, (_, i) => i + 1);
-							
-							variableObj[`input_channelNo`] = self.DATA.inputs.channelNo.join(',');
-							variableObj[`output_channelNo`] = self.DATA.outputs.channelNo.join(',');
-						} else {
-	
-							// 新しいバージョンなら @GCHE を送信
-							self.sendCommand('@GCHE,1,0,1,1');
-							self.sendCommand('@GCHE,2,0,1,1');
-						}
-					}
-					self.initVariables();
-					break;
 			}
 	
 			self.setVariableValues(variableObj);
