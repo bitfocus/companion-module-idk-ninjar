@@ -13,8 +13,6 @@ const constants = require('./src/constants')
 
 const api = require('./src/api')
 
-
-
 class ninjarInstance extends InstanceBase {
 	constructor(internal) {
 		super(internal)
