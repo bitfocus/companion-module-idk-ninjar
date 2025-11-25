@@ -9,11 +9,9 @@ const feedbacks = require('./src/feedbacks')
 const variables = require('./src/variables')
 const presets = require('./src/presets')
 
-const constants = require('./src/constants')
-
 const api = require('./src/api')
 
-
+const constants = require('./src/constants')
 
 class ninjarInstance extends InstanceBase {
 	constructor(internal) {
