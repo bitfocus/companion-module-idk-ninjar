@@ -85,13 +85,13 @@ module.exports = {
 		let self = this;
 
 		// 入力チャンネル処理
-		let inputChannels = self.DATA?.inputs?.channelNo || []; // デフォルトで空配列
+		let inputChannels = self.DATA?.inputs?.channelNo || [] // デフォルトで空配列
 		if (Array.isArray(inputChannels) && inputChannels.length > 0) {
 			console.log("Input Channels: ", inputChannels);
 
 			inputChannels.forEach((channel) => {
 				if (channel === 0 || channel === -1) {
-					return; // 処理をスキップ
+					return // 処理をスキップ
 				}
 				self.sendCommand(`@GSV,0,0,1,${channel}`, { priority: 'low' });  // ビデオ入力
 				self.sendCommand(`@GSA,0,0,1,${channel}`, { priority: 'low' });  // オーディオ入力
@@ -137,13 +137,13 @@ module.exports = {
 
 				let errorCode = parseInt(sections[1]);
 				if (errorCode === 1) {
-					self.log('error', 'Erroneous parameter format or value');
+					self.log('error', 'Erroneous parameter format or value')
 				} else if (errorCode === 2) {
-					self.log('error', 'Undefined command or wrong format');
+					self.log('error', 'Undefined command or wrong format')
 				} else if (errorCode === 3) {
-					self.log('error', 'Currently cannot be used');
+					self.log('error', 'Currently cannot be used')
 				} else if (errorCode === 99) {
-					self.log('error', 'Unknown error');
+					self.log('error', 'Unknown error')
 				}
 
 				return;
@@ -156,7 +156,7 @@ module.exports = {
 					let videoChannel = parseInt(sections[4]);
 					let input = parseInt(sections[5]);
 					if (!self.DATA.outputs[videoChannel]) {
-						self.DATA.outputs[videoChannel] = {};
+						self.DATA.outputs[videoChannel] = {}
 					}
 					self.DATA.outputs[videoChannel].currentVideoInput = input;
 					variableObj[`output_video_${videoChannel}_current_input`] = input;
@@ -166,7 +166,7 @@ module.exports = {
 					let audioChannel = parseInt(sections[4]);
 					let audioInput = parseInt(sections[5]);
 					if (!self.DATA.outputs[audioChannel]) {
-						self.DATA.outputs[audioChannel] = {};
+						self.DATA.outputs[audioChannel] = {}
 					}
 					self.DATA.outputs[audioChannel].currentAudioInput = audioInput;
 					variableObj[`output_audio_${audioChannel}_current_input`] = audioInput;
@@ -191,7 +191,7 @@ module.exports = {
 						let audioSamplingFrequency = statusSections[9] || '';
 
 						if (!self.DATA.inputs[channel]) {
-							self.DATA.inputs[channel] = {}; // 初期化
+							self.DATA.inputs[channel] = {} // 初期化
 						}
 						if (type === 1) {
 							Object.assign(self.DATA.inputs[channel], {
@@ -219,7 +219,7 @@ module.exports = {
 							variableObj[`input_${channel}_audiosamplingfrequency`] = audioSamplingFrequency;
 						} else if (type === 2) {
 							if (!self.DATA.outputs[channel]) {
-								self.DATA.outputs[channel] = {}; // 初期化
+								self.DATA.outputs[channel] = {} // 初期化
 							}
 
 							Object.assign(self.DATA.outputs[channel], {
@@ -247,7 +247,7 @@ module.exports = {
 							variableObj[`output_${channel}_audiosamplingfrequency`] = audioSamplingFrequency;
 						}
 					} catch (error) {
-						console.log('error parsing status', error);
+						console.log('error parsing status', error)
 					}
 
 					break;
