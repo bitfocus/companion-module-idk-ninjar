@@ -4,16 +4,15 @@ module.exports = {
 		let actions = {}
 
 		self.getInputChannels = function () {
-			const inputChannels = Array.isArray(self.DATA.inputs.channelNo) ? self.DATA.inputs.channelNo : [];
-			if (!inputChannels.includes(0)) inputChannels.unshift(0);
-			return inputChannels.map((ch) => ({ id: ch, label: `Input ${ch}` }));
+			const inputChannels = Array.isArray(self.DATA.inputs.channelNo) ? self.DATA.inputs.channelNo : []
+			if (!inputChannels.includes(0)) inputChannels.unshift(0)
+			return inputChannels.map((ch) => ({ id: ch, label: `Input ${ch}` }))
 		}
 
-
 		self.getOutputChannels = function () {
-			const outputChannels = Array.isArray(self.DATA.outputs.channelNo) ? self.DATA.outputs.channelNo : [];
-			if (!outputChannels.includes(0)) outputChannels.unshift(0);
-			return outputChannels.map((ch) => ({ id: ch, label: `Output ${ch}` }));
+			const outputChannels = Array.isArray(self.DATA.outputs.channelNo) ? self.DATA.outputs.channelNo : []
+			if (!outputChannels.includes(0)) outputChannels.unshift(0)
+			return outputChannels.map((ch) => ({ id: ch, label: `Output ${ch}` }))
 		}
 
 		actions.loadRegisteredCommand = {
@@ -175,17 +174,17 @@ module.exports = {
 				self.sendCommand(command)
 			},
 		}
-	
-			self.refreshActionChoices = () => {
-				actions.switchVideoChannel.options[0].choices = self.getInputChannels()
-				actions.switchVideoChannel.options[1].choices = self.getOutputChannels()
-				actions.switchAudioChannel.options[0].choices = self.getInputChannels()
-				actions.switchAudioChannel.options[1].choices = self.getOutputChannels()
-				actions.switchVideoAndAudioChannel.options[0].choices = self.getInputChannels()
-				actions.switchVideoAndAudioChannel.options[1].choices = self.getOutputChannels()
-			    self.setActionDefinitions(actions)
-				console.log('info', 'Action choices refreshed')
-			}
+
+		self.refreshActionChoices = () => {
+			actions.switchVideoChannel.options[0].choices = self.getInputChannels()
+			actions.switchVideoChannel.options[1].choices = self.getOutputChannels()
+			actions.switchAudioChannel.options[0].choices = self.getInputChannels()
+			actions.switchAudioChannel.options[1].choices = self.getOutputChannels()
+			actions.switchVideoAndAudioChannel.options[0].choices = self.getInputChannels()
+			actions.switchVideoAndAudioChannel.options[1].choices = self.getOutputChannels()
 			self.setActionDefinitions(actions)
+			console.log('info', 'Action choices refreshed')
+		}
+		self.setActionDefinitions(actions)
 	},
 }
